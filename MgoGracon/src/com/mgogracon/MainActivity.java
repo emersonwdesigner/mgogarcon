@@ -1,98 +1,65 @@
 package com.mgogracon;
 
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.net.UnknownHostException;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
-import android.view.Menu;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.Menu;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
+import com.dm.zbar.android.scanner.ZBarConstants;
+import com.dm.zbar.android.scanner.ZBarScannerActivity;
+import net.sourceforge.zbar.Symbol;
 
 public class MainActivity extends Activity {
-	 
-	  protected static final String ZXING_MARKET = "market://search?q=pname:com.google.zxing.client.android";
-		protected static final String ZXING_DIRECT = "https://zxing.googlecode.com/files/BarcodeScanner3.1.apk";
-	 
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setContentView(R.layout.activity_main);
-		}
-	 
-	 
-		/**
-		 * Método que será chamado no clique do botão
-		 * 
-		 * @param view
-		 */
-		public void lerQR(View view) {
-			Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-			intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-	 
-			try {
-				startActivityForResult(intent, 0);
-	 
-			} catch (ActivityNotFoundException e) {
-				mostrarMensagem();
-			}
-		}
-	 
-		/**
-		 * Pergnta se o usuário deseja instalar o ZXing
-		 */
-		private void mostrarMensagem() {
-			new AlertDialog.Builder(this)
-					.setTitle("Instalar barcode scanner?")
-					.setMessage("Para escanear QR code você precisa instalar o ZXing barcode scanner.")
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setPositiveButton("Instalar",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int whichButton) {
-									Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ZXING_MARKET));
-									try {
-										startActivity(intent);
-									} catch (ActivityNotFoundException e) { // Se não tiver o Play Store
-										intent = new Intent(Intent.ACTION_VIEW, Uri.parse(ZXING_DIRECT));
-										startActivity(intent);
-									}
-								}
-							})
-					.setNegativeButton("Cancelar", null).show();
-	 
-		}
-		
-	    @Override
-		public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-			if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
-				String qrcode = intent.getStringExtra("SCAN_RESULT");
-				
-				TextView label = (TextView) findViewById(R.id.texto);
-				label.setText(qrcode);			
-			} 
-		}
 
+    private static final int ZBAR_SCANNER_REQUEST = 0;
+    private static final int ZBAR_QR_SCANNER_REQUEST = 1;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+    public void launchScanner(View v) {
+        if (isCameraAvailable()) {
+            Intent intent = new Intent(this, ZBarScannerActivity.class);
+            startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+        } else {
+            Toast.makeText(this, "Rear Facing Camera Unavailable", Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    public void launchQRScanner(View v) {
+        if (isCameraAvailable()) {
+            Intent intent = new Intent(this, ZBarScannerActivity.class);
+            intent.putExtra(ZBarConstants.SCAN_MODES, new int[]{Symbol.QRCODE});
+            startActivityForResult(intent, ZBAR_SCANNER_REQUEST);
+        } else {
+            Toast.makeText(this, "Rear Facing Camera Unavailable", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public boolean isCameraAvailable() {
+        PackageManager pm = getPackageManager();
+        return pm.hasSystemFeature(PackageManager.FEATURE_CAMERA);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case ZBAR_SCANNER_REQUEST:
+            case ZBAR_QR_SCANNER_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
+                } else if(resultCode == RESULT_CANCELED && data != null) {
+                    String error = data.getStringExtra(ZBarConstants.ERROR_INFO);
+                    if(!TextUtils.isEmpty(error)) {
+                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
+    }
 }
