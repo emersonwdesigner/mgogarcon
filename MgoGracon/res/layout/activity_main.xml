@@ -4,13 +4,22 @@
     android:padding="5dp"
     android:gravity="center"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <Button
-        android:id="@+id/scan_btn"
+    android:layout_height="fill_parent"
+    android:background="@color/branco">
+
+    <TextView
+        android:id="@+id/resultado"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:onClick="launchScanner"
-        android:text="Scan" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/scan" />
+
+   
 
     <Button
         android:id="@+id/qrscan_btn"
@@ -18,4 +27,5 @@
         android:layout_width="fill_parent"
         android:onClick="launchQRScanner"
         android:text="QRCODE" />
+
 </LinearLayout>

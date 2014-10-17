@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.dm.zbar.android.scanner.ZBarConstants;
 import com.dm.zbar.android.scanner.ZBarScannerActivity;
@@ -15,11 +16,15 @@ public class MainActivity extends Activity {
 
     private static final int ZBAR_SCANNER_REQUEST = 0;
     private static final int ZBAR_QR_SCANNER_REQUEST = 1;
+    TextView resultado;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        resultado = (TextView) findViewById(R.id.resultado);
+        resultado.setText("resultado");
+        
     }
 
     public void launchScanner(View v) {
@@ -53,7 +58,13 @@ public class MainActivity extends Activity {
             case ZBAR_SCANNER_REQUEST:
             case ZBAR_QR_SCANNER_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
+                    resultado.setText(data.getStringExtra(ZBarConstants.SCAN_RESULT) + " ");
+                    
+                    Intent intent = new Intent(this, ResultadoActivity.class);
+                    intent.putExtra("RES", data.getStringExtra(ZBarConstants.SCAN_RESULT));
+                    startActivity(intent);
+                    
                 } else if(resultCode == RESULT_CANCELED && data != null) {
                     String error = data.getStringExtra(ZBarConstants.ERROR_INFO);
                     if(!TextUtils.isEmpty(error)) {
