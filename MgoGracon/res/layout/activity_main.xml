@@ -27,5 +27,12 @@
         android:layout_width="fill_parent"
         android:onClick="launchQRScanner"
         android:text="QRCODE" />
+    
+    <Button
+        android:id="@+id/listar"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:onClick="listar"
+        android:text="Produtos" />
 
 </LinearLayout>

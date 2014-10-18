@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import net.sourceforge.zbar.Symbol;
 
 public class MainActivity extends Activity {
 
+	DataBaseHandler db = new DataBaseHandler(this);
     private static final int ZBAR_SCANNER_REQUEST = 0;
     private static final int ZBAR_QR_SCANNER_REQUEST = 1;
     TextView resultado;
@@ -24,6 +26,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         resultado = (TextView) findViewById(R.id.resultado);
         resultado.setText("resultado");
+        
+        db.criaProdutos("Xis Salada", 5.5, 1);
+        
+        int conta = db.contaProdutos();
+        Toast.makeText(this, String.valueOf(conta), Toast.LENGTH_SHORT).show();
         
     }
 
@@ -44,6 +51,11 @@ public class MainActivity extends Activity {
         } else {
             Toast.makeText(this, "Rear Facing Camera Unavailable", Toast.LENGTH_SHORT).show();
         }
+    }
+    
+    public void listar(View v) {
+    	Log.v("aviso","sim");
+    	startActivity(new Intent(MainActivity.this, ListarProdutosActivity.class));
     }
 
     public boolean isCameraAvailable() {
