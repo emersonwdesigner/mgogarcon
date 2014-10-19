@@ -21,7 +21,7 @@ public class ListarProdutosActivity extends Activity {
 int[] to = { R.id.txtDescricao,R.id.txtValor};        
 
 Cursor cursor = db.listarProdutos();
-     Log.v("aviso","1");
+     
      
    @SuppressWarnings("deprecation")
 SimpleCursorAdapter adapter =  new SimpleCursorAdapter(this, R.layout.list_produtos, cursor, from, to);

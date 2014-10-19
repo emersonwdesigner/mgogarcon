@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
         resultado = (TextView) findViewById(R.id.resultado);
         resultado.setText("resultado");
         
-        db.criaProdutos("Xis Salada", 5.5, 1);
+        
         
         int conta = db.contaProdutos();
         Toast.makeText(this, String.valueOf(conta), Toast.LENGTH_SHORT).show();
@@ -73,9 +73,15 @@ public class MainActivity extends Activity {
                    // Toast.makeText(this, "Scan Result = " + data.getStringExtra(ZBarConstants.SCAN_RESULT), Toast.LENGTH_SHORT).show();
                     resultado.setText(data.getStringExtra(ZBarConstants.SCAN_RESULT) + " ");
                     
-                    Intent intent = new Intent(this, ResultadoActivity.class);
+                    db.criaLocal(data.getStringExtra(ZBarConstants.SCAN_RESULT), "nome");
+                    Log.v("aviso","servico");
+                    startService(new Intent("MGO_GARCON_RESPOSTA"));
+                    
+                    Log.v("aviso","servico2");
+                   /** Intent intent = new Intent(this, ResultadoActivity.class);
                     intent.putExtra("RES", data.getStringExtra(ZBarConstants.SCAN_RESULT));
                     startActivity(intent);
+                    **/
                     
                 } else if(resultCode == RESULT_CANCELED && data != null) {
                     String error = data.getStringExtra(ZBarConstants.ERROR_INFO);

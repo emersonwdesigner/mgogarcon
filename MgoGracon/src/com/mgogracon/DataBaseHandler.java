@@ -18,13 +18,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "menu";
 
 	// Tabelas
-	private static final String TABLE_PRODUTOS = "produtos";
+	private static final String TABLE_PRODUTOS 	= "produtos";
+	private static final String TABLE_LOCAL 	= "local";
 
-	// Tabela usuário
+	// Tabela produtos
 	static final String KEY_PRODUTOS_ID = "_id";
 	static final String KEY_PRODUTOS_DESCRICAO = "descricao";
 	static final String KEY_PRODUTOS_VALOR = "valor";
 	static final String KEY_PRODUTOS_LOCAL = "local";
+	
+	// Tabela local
+	
+	static final String KEY_LOCAL_ID 	= "_id";
+	static final String KEY_LOCAL_COD 	= "code_local";
+	static final String KEY_LOCAL_NOME 	= "nome_local";
+	
 		
 	public DataBaseHandler(Context context) {
 	super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,12 +41,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 	// Creating Tables
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_PRODUTOS + "("
+		String CREATE_PRODUTOS_TABLE = "CREATE TABLE " + TABLE_PRODUTOS + "("
 				+ KEY_PRODUTOS_ID + " INTEGER PRIMARY KEY," 
 				+ KEY_PRODUTOS_DESCRICAO + " TEXT, "
 				+ KEY_PRODUTOS_VALOR + " DOUBLE, "
-				+ KEY_PRODUTOS_LOCAL + " INT)";
-		db.execSQL(CREATE_USER_TABLE);
+				+ KEY_PRODUTOS_LOCAL + " TEXT)";
+		db.execSQL(CREATE_PRODUTOS_TABLE);
+		
+		
+		String CREATE_LOCAL_TABLE = "CREATE TABLE " + TABLE_LOCAL + "("
+				+ KEY_LOCAL_ID + " INTEGER PRIMARY KEY," 
+				+ KEY_LOCAL_COD + " TEXT, "
+				+ KEY_LOCAL_NOME + " TEXT)";
+		db.execSQL(CREATE_LOCAL_TABLE);
 
 			
 	}
@@ -55,7 +70,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 	//--------------produtos-------------------------//
     //Cria Produtos
-                    public long criaProdutos(String d, double v, int l) {
+                    public long criaProdutos(String d, double v, String l) {
                     SQLiteDatabase db = this.getWritableDatabase();
                     
                     ContentValues values = new ContentValues();
@@ -104,5 +119,46 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                        }
                    }
                        
-               }            
+               } 
+                   
+                   
+                 //--------------LOCAL-------------------------//  
+                   
+                 //Cria local
+                   public long criaLocal(String c, String n) {
+                   SQLiteDatabase db = this.getWritableDatabase();
+                   
+                   ContentValues values = new ContentValues();
+                   values.put(KEY_LOCAL_COD, c);
+                   values.put(KEY_LOCAL_NOME, n);
+                   
+                   // Inserting Row
+                   long id = db.insert(TABLE_LOCAL, null, values);
+                   return id;
+                   }
+	
+                   //exibe local
+                   public String exibeLocal() {
+                       
+                       String selectQuery = 
+                               "SELECT * FROM "+TABLE_LOCAL+" WHERE "+KEY_LOCAL_ID+"='1' LIMIT 1";
+
+                           SQLiteDatabase db = this.getWritableDatabase();
+                           Cursor cursor = db.rawQuery(selectQuery, null);
+
+                           StringBuilder sb = new StringBuilder();
+
+                           cursor.moveToFirst();
+
+                           /*********** Fazer isto por cada coluna ***************/
+                           String nome_da_coluna_string = cursor.getString(cursor.getColumnIndex(KEY_LOCAL_COD));
+
+                           sb.append(nome_da_coluna_string);
+                           /******************************************************/
+
+                           cursor.close();
+
+                           return sb.toString();
+
+               }
 	}

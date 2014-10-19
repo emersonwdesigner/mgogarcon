@@ -9,7 +9,7 @@
         android:targetSdkVersion="18" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-
+	<uses-permission android:name="android.permission.INTERNET" />
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -40,6 +40,14 @@
             android:label="@string/title_activity_resultado" 
             android:theme="@android:style/Theme.Light.NoTitleBar">
         </activity>
+        
+        <service android:name="com.mgogracon.ImportaMenuService"  >
+            <intent-filter>
+                <action android:name="MGO_GARCON_RESPOSTA" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
